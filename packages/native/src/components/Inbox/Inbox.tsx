@@ -5,6 +5,7 @@ import { View, StyleSheet, Keyboard } from 'react-native';
 import List from '@ant-design/react-native/lib/list';
 import InputItem from '@ant-design/react-native/lib/input-item';
 import Button from '@ant-design/react-native/lib/button';
+import SwipeAction, { SwipeoutButtonProps } from '@ant-design/react-native/lib/swipe-action';
 import { AntDesign } from '@expo/vector-icons';
 import { InboxContext } from '../../context/InboxContext';
 
@@ -18,6 +19,14 @@ const styles = StyleSheet.create({
 
 export const Inbox = () => {
   const { tasks, addTask, removeTask } = React.useContext(InboxContext);
+
+  const swipeOptions = (task: string): SwipeoutButtonProps[] => ([
+    {
+      text: 'Delete',
+      onPress: () => removeTask(task),
+      style: { backgroundColor: '#f5222d', color: '#FFFFFF' },
+    },
+  ]);
 
   return (
     <View style={styles.wrapper}>
@@ -50,9 +59,16 @@ export const Inbox = () => {
       </Formik>
       <List>
         {tasks.map(task => (
-          <List.Item key={task} onPress={() => removeTask(task)} extra={<AntDesign name="minuscircle" />}>
+          <SwipeAction
+            key={task}
+            autoClose
+            style={{ backgroundColor: 'transparent' }}
+            right={swipeOptions(task)}
+          >
+            <List.Item>
             {task}
-          </List.Item>
+            </List.Item>
+          </SwipeAction>
         ))}
       </List>
     </View>

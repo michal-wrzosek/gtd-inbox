@@ -4,7 +4,11 @@
     "slug": "gtd-inbox",
     "privacy": "public",
     "sdkVersion": "34.0.0",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,10 +20,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
-    "description": "\"Getting Things Done\" Inbox App"
+    "description": "\"Getting Things Done\" Inbox App",
+    "githubUrl": "https://github.com/michal-wrzosek/gtd-inbox"
   }
 }
