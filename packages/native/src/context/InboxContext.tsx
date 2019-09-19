@@ -1,16 +1,27 @@
 import React from 'react';
 import { AsyncStorage } from 'react-native';
+import { generateId } from '../util/generateId';
+
+export type TaskType = {
+  id: string;
+  name: string;
+};
 
 interface InboxContextState {
-  tasks: string[];
+  tasks: TaskType[];
 }
 
 interface InboxContextCallbacks {
-  addTask: (task: string) => any;
-  removeTask: (task: string) => any;
+  addTask: (taskName: TaskType['name']) => any;
+  removeTask: (taskId: TaskType['id']) => any;
 }
 
 interface InboxContextValue extends InboxContextState, InboxContextCallbacks {}
+
+const createNewTask = (taskName: string): TaskType => ({
+  id: generateId(),
+  name: taskName,
+});
 
 export const InboxContext = React.createContext<InboxContextValue>({} as InboxContextValue);
 
@@ -22,7 +33,6 @@ export const InboxContextProvider: React.FC = ({ children }) => {
     const saveState = async () => {
       try {
         const inboxRaw = JSON.stringify(state);
-        console.log('saveState', inboxRaw);
         await AsyncStorage.setItem('inbox', inboxRaw);
       } catch (error) {
         console.error(error);
@@ -37,11 +47,11 @@ export const InboxContextProvider: React.FC = ({ children }) => {
   React.useEffect(() => {
     const getSavedState = async () => {
       try {
+        // AsyncStorage.removeItem('inbox');
         const inboxRaw = await AsyncStorage.getItem('inbox');
         if (inboxRaw === null) return;
 
         const inbox = JSON.parse(inboxRaw);
-        console.log('getSavedState', inbox);
         setState(inbox);
       } catch (error) {
         console.error(error);
@@ -52,24 +62,21 @@ export const InboxContextProvider: React.FC = ({ children }) => {
   }, [setState]);
 
   const addTask = React.useCallback(
-    (task: string) => {
+    (taskName: Task['name']) => {
       stateWasMutatedByUser.current = true;
-      setState(prevState =>
-        prevState.tasks.indexOf(task) === -1
-          ? {
-              ...prevState,
-              tasks: [task, ...prevState.tasks],
-            }
-          : prevState,
-      );
+
+      setState(prevState => ({
+        ...prevState,
+        tasks: [createNewTask(taskName), ...prevState.tasks],
+      }));
     },
     [setState],
   );
 
   const removeTask = React.useCallback(
-    (task: string) => {
+    (taskId: TaskType['id']) => {
       stateWasMutatedByUser.current = true;
-      setState(prevState => ({ ...prevState, tasks: prevState.tasks.filter(t => t !== task) }));
+      setState(prevState => ({ ...prevState, tasks: prevState.tasks.filter(task => task.id !== taskId) }));
     },
     [setState],
   );

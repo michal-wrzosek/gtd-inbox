@@ -1,32 +1,37 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, Platform, View } from 'react-native';
-import Constants from 'expo-constants';
+import { createAppContainer, NavigationScreenProps } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { AntDesign } from '@expo/vector-icons';
 
 import { Inbox } from './src/components/Inbox/Inbox';
+import { Task } from './src/components/Task/Task';
 import { InboxContextProvider } from './src/context/InboxContext';
-import { Menu } from './src/components/Menu/Menu';
 
-export default function App() {
+const InboxNavigator = createStackNavigator(
+  {
+    Inbox,
+    Task: Task as React.FC,
+  },
+  {
+    initialRouteName: 'Inbox',
+    navigationOptions: {
+      tabBarLabel: 'Inbox',
+      tabBarIcon: ({ tintColor }) => <AntDesign name="inbox" color={tintColor} size={24} />,
+    },
+  },
+);
+
+const Tabs = createBottomTabNavigator({ InboxNavigator });
+
+const AppContainer = createAppContainer(Tabs);
+
+export const App = () => {
   return (
     <InboxContextProvider>
-      <SafeAreaView style={styles.container}>
-        <Inbox />
-        <View style={styles.menu}>
-          <Menu />
-        </View>
-      </SafeAreaView>
+      <AppContainer />
     </InboxContextProvider>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0,
-  },
-  menu: { position: 'absolute', bottom: 0, width: '100%' },
-});
+export default App;

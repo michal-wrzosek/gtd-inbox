@@ -1,13 +1,16 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 
-import { Formik } from 'formik';
 import { View, StyleSheet, Keyboard } from 'react-native';
+import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackOptions } from 'react-navigation-stack';
+import { Formik } from 'formik';
 import List from '@ant-design/react-native/lib/list';
 import InputItem from '@ant-design/react-native/lib/input-item';
 import Button from '@ant-design/react-native/lib/button';
-import SwipeAction, { SwipeoutButtonProps } from '@ant-design/react-native/lib/swipe-action';
 import { AntDesign } from '@expo/vector-icons';
+
 import { InboxContext } from '../../context/InboxContext';
+import { TaskProps } from '../Task/Task';
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1, width: '100%' },
@@ -17,23 +20,17 @@ const styles = StyleSheet.create({
   list: { width: '100%' },
 });
 
-export const Inbox = () => {
-  const { tasks, addTask, removeTask } = React.useContext(InboxContext);
-
-  const swipeOptions = (task: string): SwipeoutButtonProps[] => ([
-    {
-      text: 'Delete',
-      onPress: () => removeTask(task),
-      style: { backgroundColor: '#f5222d', color: '#FFFFFF' },
-    },
-  ]);
+export const Inbox: React.FC<NavigationScreenProps> & { navigationOptions: NavigationStackOptions } = ({
+  navigation,
+}) => {
+  const { tasks, addTask } = React.useContext(InboxContext);
 
   return (
     <View style={styles.wrapper}>
       <Formik
-        initialValues={{ task: '' }}
+        initialValues={{ taskName: '' }}
         onSubmit={(values, { resetForm }) => {
-          addTask(values.task);
+          addTask(values.taskName);
           resetForm();
           Keyboard.dismiss();
         }}
@@ -43,9 +40,10 @@ export const Inbox = () => {
             <List>
               <InputItem
                 style={styles.input}
-                value={props.values.task}
-                onChangeText={props.handleChange('task')}
-                onBlur={props.handleBlur('task')}
+                value={props.values.taskName}
+                onChangeText={props.handleChange('taskName')}
+                onBlur={props.handleBlur('taskName')}
+                onSubmitEditing={() => props.handleSubmit()}
                 placeholder={'Task name'}
               />
               <List.Item>
@@ -59,18 +57,15 @@ export const Inbox = () => {
       </Formik>
       <List>
         {tasks.map(task => (
-          <SwipeAction
-            key={task}
-            autoClose
-            style={{ backgroundColor: 'transparent' }}
-            right={swipeOptions(task)}
-          >
-            <List.Item>
-            {task}
-            </List.Item>
-          </SwipeAction>
+          <List.Item key={task.id} onPress={() => navigation.navigate('Task', { task } as TaskProps)}>
+            {task.name}
+          </List.Item>
         ))}
       </List>
     </View>
   );
+};
+
+Inbox.navigationOptions = {
+  title: 'Inbox',
 };

@@ -1,4 +1,13 @@
 {
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.renderWhitespace": "boundary",
+  "files.exclude": {
+    "**/build": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/node_modules": true
+  },
   "eslint.autoFixOnSave": true,
   "eslint.validate": [
     "javascript",
@@ -6,10 +15,9 @@
     { "language": "typescript", "autoFix": true },
     { "language": "typescriptreact", "autoFix": true }
   ],
-  "eslint.workingDirectories": ["packages/native"],
+  "eslint.workingDirectories": ["packages/api", "packages/web"],
+  "javascript.validate.enable": false,
   "editor.formatOnSave": true,
-  "editor.renderWhitespace": "boundary",
-  "files.exclude": {
-    "**/node_modules": true
-  }
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false
 }
